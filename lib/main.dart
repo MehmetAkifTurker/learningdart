@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:learningdart/firebase_options.dart';
+import 'package:learningdart/views/login_view.dart';
+import 'package:learningdart/views/register_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +18,10 @@ void main() {
       ),
       // Set the home screen of the app
       home: const HomePage(),
+      routes: {
+        '/login/': (context) => const LoginView(),
+        '/register/': (context) => const RegisterView(),
+      },
     ),
   );
 }
@@ -25,30 +31,25 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Home"),
-        backgroundColor: Colors.blue,
+    return FutureBuilder(
+      future: Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
       ),
-      body: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              final user = FirebaseAuth.instance.currentUser;
-              final emailVerified = user?.emailVerified ?? false;
-              if (emailVerified) {
-                print("Verified User");
-              } else
-                print("You need to verify email");
-              return const Text("DONE");
-            default:
-              return const Text("Loading....");
-          }
-        },
-      ),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.done:
+            // final user = FirebaseAuth.instance.currentUser;
+            // final emailVerified = user?.emailVerified ?? false;
+            // if (emailVerified) {
+            //   return const Text("DONE");
+            // } else {
+            //   return const VerifyEmailView();
+            // }
+            return const LoginView();
+          default:
+            return const CircularProgressIndicator();
+        }
+      },
     );
   }
 }
