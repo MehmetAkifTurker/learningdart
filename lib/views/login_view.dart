@@ -100,6 +100,8 @@
 //   }
 // }
 
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -174,17 +176,23 @@ class _LoginViewState extends State<LoginView> {
                         );
                         final user = FirebaseAuth.instance.currentUser;
                         if (user != null && !user.emailVerified) {
-                          Navigator.of(context).pushNamed('/verify-email/');
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                            '/verify-email/',
+                            (route) => false,
+                          );
                         } else {
-                          // Navigate to the home screen or another screen
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                            '/notes/',
+                            (route) => false,
+                          );
                         }
                       } on FirebaseAuthException catch (e) {
                         if (e.code == "user-not-found") {
-                          print("No user found for that email.");
+                          log("No user found for that email.");
                         } else if (e.code == "wrong-password") {
-                          print("Wrong password provided.");
+                          log("Wrong password provided.");
                         } else {
-                          print("Something went wrong: ${e.message}");
+                          log("Something went wrong: ${e.message}");
                         }
                       }
                     },
